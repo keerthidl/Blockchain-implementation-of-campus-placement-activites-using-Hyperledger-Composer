@@ -1,0 +1,100 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Sample access control list.
+ */
+
+ruleStudentCannotDeleteAnything{
+ 	 description: "Allow Students only read only access to resources"
+ 	 participant: "org.sois.placement.*"
+  	 operation: DELETE
+         resource: "org.sois.placement.*"
+  	 action: DENY
+}
+  
+rule StudentCanReadEverything {
+    description: "Allow Students read access to all resources"
+    participant: "org.sois.placement.*"
+    operation: READ
+    resource: "org.sois.placement.*"
+    action: ALLOW
+}
+
+rule placementcoordinatorCanSubmitTransactions {
+    description: "placementcoordinator to submit transactions"
+    participant: "org.sois.placement.placementCoordinator"
+    operation: ALL
+    resource: "org.sois.placement.Notify"
+    action: ALLOW
+}
+
+rule RecruiterCanSubmitTransactions {
+    description: "Recruiter to submits transactions of Requirment"
+    participant: "org.sois.placement.Recruiter"
+    operation: ALL
+    resource: "org.sois.placement.Requirment"
+    action: ALLOW
+}
+
+rule placementCoordinatorcansubmitresponseTransaction {
+  description: "placementCoordinator submits response to Recruiter"
+  participant: "org.sois.placement.placementCoordinator"
+  operation: ALL
+  resource: "org.sois.placement.response"
+  action: ALLOW
+}
+
+rule placementCoordinatorHasFullAccessToTheirAssets {
+    description: "Allow placementCoordinator full access to their assets"
+    participant(p): "org.sois.placement.placementCoordinator"
+    operation: ALL
+    resource(r): "org.sois.placement.notification"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+}
+
+rule RecruiterAccessToTheirAssets {
+    description: "Allow Recruiter full access to their assets"
+    participant(p): "org.sois.placement.Recruiter"
+    operation: ALL
+    resource(r): "org.sois.placement.OrgRequirment"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+}
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
